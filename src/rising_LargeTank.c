@@ -45,11 +45,24 @@ event init (t = 0) {
   }
 }
 
-event movie (t = 5; t <= MAXTIME; t += 0.25)
+event acceleration (i++) {
+  face vector av = a;
+  foreach_face(y)
+    av.y[] -= 1.;
+}
+
+event adapt (i++) {
+  double uemax = 1e-2;
+  adapt_wavelet ({f,u}, (double[]){0.01,uemax,uemax,uemax}, LEVEL, 5);
+}
+
+event movie (t = 21; t <= MAXTIME; t += 0.25)
 {
   
   view (fov = 5.0278, quat = {-0.132839,0.513023,0.0748175,0.844727},
 	tx = 0.00149469, ty = -0.355489, width = 300, height = 800);
+  travelling (50, 60, fov = 2.07254, tx = 0.00524944, ty = -0.513744);
+  travelling (60, 82, tx = 0.00898601, ty = -0.703841);
   clear();
   draw_vof ("f", fc = {0.13,0.47,0.77});
   #if dimension == 3
