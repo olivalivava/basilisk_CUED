@@ -7,9 +7,6 @@
 #include "two-phase.h"
 #include "vof.h"
 #include "tension.h"
-// #if dimension == 3
-// # include "lambda2.h"
-// #endif
 #include "view.h"
 #include "axi.h"
 
@@ -33,7 +30,7 @@ double R = 0.01;
 
 const double Zi = 3.5;
 //double uvel = 0.5; //set colliding speed (uniform velocity ??)
-double runtime = 0.5; //set runtime length
+double runtime = 2.0; //set runtime length
 //#include "two-phase-generic.h"
 
 
@@ -68,11 +65,7 @@ event movie (t += 0.004; t <= runtime)
   clear();
   squares ("u.x", spread = -1, linear = true);
   draw_vof ("f");
-//   #if dimension == 3
-//   scalar l2[];
-//   lambda2 (u, l2);
-//   isosurface ("l2", -0.0002);
-//   #endif
+
   box();
   save ("movie3D.mp4");
 }
