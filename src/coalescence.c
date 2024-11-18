@@ -1,62 +1,78 @@
 #include "grid/multigrid.h"
+
+#define dimension 3
+
 #include "navier-stokes/centered.h"
+#define mu(f)  (1./(clamp(f,0,1)*(1./mu1 - 1./mu2) + 1./mu2))
+#include "two-phase.h"
 #include "vof.h"
 #include "tension.h"
+#if dimension == 3
+# include "lambda2.h"
+#endif
 #include "view.h"
+#include "axi.h"
 
 #ifndef LEVEL
 # define LEVEL 8
 #endif
 
-scalar f[], * interfaces = {f};
+double We = 61.4;
+double Re = 296.5;
+double B = 0.0;
+double R = 0.01;
 
-double R1 = 0.4; //set the radius for the left droplet (R1<1.)
-double R2 = 0.5; //set the radius for the right (R2<1.)
-double muc1 = 1.8e-5; //set outer fluid dynamic viscosity
-double muc2 = 1.e-3; //set inner fluid dynamic viscosity
-double rhoc1 = 1.; //set outer fluid density
-double rhoc2 = 1000.; //set inner fluid density
-double sigmac = 5; //set surface tension coefficient
+#define rho1c 762.0 //tetradecane
+#define rho2c 1.251 //nitrogen
+#define sigmac 0.0276 //tetradecane
+#define MUR 97.7
 
-double uvelc = 1.; //set colliding speed (uniform velocity ??)
-double runtime = 6.; //set runtime length
+
+//double R1 = R; //set the radius for the left droplet (R1<1.)
+//double R2 = R; //set the radius for the right (R2<1.)
+
+const double Zi = 3.5;
+//double uvel = 0.5; //set colliding speed (uniform velocity ??)
+double runtime = 2.; //set runtime length
 //#include "two-phase-generic.h"
 
 
 
 int main()
 {
-  size (4.);
-  origin (-L0/2., -L0/2.);
-  init_grid(1 << LEVEL); // Higher grid resolution
-  const face vector muc[] = {muc1, muc2}; // {outer field, inner field}
-  const face vector rhoc[] = {rhoc1, rhoc2}; // Density
-
-  face vector rho[]; // Explicitly define rho as a face vector
-
-  mu = muc;
-  rho = rhoc;
+  size (10*R);
+  origin (-L0/2., 0, -L0/2.);
+  init_grid(64); // Higher grid resolution
+  double uvelc = sqrt((We*sigmac)/(rho1c*2*R));
+  rho1 = rho1c;
+  rho2 = rho2c;
+  mu1 = (rho1*uvelc*2*R)/Re;
+  mu2 = mu1/MUR;
   f.sigma = sigmac;
+  TOLERANCE = 1e-4 [*];
   run();
 }
 
 event init (t = 0)
 {
-  fraction (f, max (- (sq(x + 1.) + sq(y) - sq(R1)),
-		    - (sq(x - 1.) + sq(y) - sq(R2))));
-  double uvel = uvelc;
+  fraction (f, max (- (sq(x + 2*R) + sq(y) + sq(z)- sq(R)),
+		    - (sq(x - 2*R) + sq(y) + sq(z) - sq(R))));
   foreach() {
-    if (f[] > 1e-6){ //Apply velocity only within the droplets
-      u.x[] = - sign(x)*f[] * uvel; //how to assign velocity to each droplet?
-    }
+      double uvelc = sqrt((We*sigmac)/(rho1c*2*R));
+      u.x[] = - sign(x)*f[] * uvelc; //how to assign velocity to each droplet?
   }
 }
 
-event movie (t += 0.04; t <= runtime)
+event movie (t += 0.004; t <= runtime)
 {
   clear();
   squares ("u.x", spread = -1, linear = true);
   draw_vof ("f");
+  #if dimension == 3
+  scalar l2[];
+  lambda2 (u, l2);
+  isosurface ("l2", -0.0002);
+  #endif
   box();
   save ("movie.mp4");
 }
