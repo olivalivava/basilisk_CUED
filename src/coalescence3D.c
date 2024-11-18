@@ -24,7 +24,7 @@ double R = 0.01;
 
 #define rho1c 762.0 //tetradecane
 #define rho2c 1.251 //nitrogen
-#define sigmac 0.0276 //tetradecane
+#define sigmac 27.6 //tetradecane
 #define MUR 97.7
 
 
