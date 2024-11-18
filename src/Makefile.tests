@@ -1,0 +1,17 @@
+# Automatically generated using 'make Makefile.tests'
+# DO NOT EDIT, edit 'Makefile' instead
+ALLTESTS = \
+	bump.c \
+	bview.c \
+	coalescence.c \
+	droplets_test.c \
+	include.c \
+	postproc.c \
+	qcc.c \
+
+TESTS = \
+
+SPECIAL_TESTS = \
+
+ALLPAGES = \
+
