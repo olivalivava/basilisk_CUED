@@ -17,7 +17,7 @@
 double We = 61.4;
 double Re = 296.5;
 double B = 0.0;
-double R = 0.01;
+double R = 0.000168;
 
 #define rho1c 762.0 //tetradecane
 #define rho2c 1.251 //nitrogen
@@ -44,7 +44,7 @@ p[right] = dirichlet(0.);
 
 int main()
 {
-  size (20*R);
+  size (15*R);
   origin (-L0/2., 0, -L0/2.);
   init_grid(64); // Higher grid resolution
   double uvelc = sqrt((We*sigmac)/(rho1c*2*R));
@@ -53,7 +53,7 @@ int main()
   mu1 = (rho1*uvelc*2*R)/Re;
   mu2 = mu1/MUR;
   f.sigma = sigmac;
-  TOLERANCE = 1e-4 [*];
+  TOLERANCE = 1e-5 [*];
   run();
 }
 
@@ -67,11 +67,18 @@ event init (t = 0)
   }
 }
 
-event movie (t += 0.004; t <= runtime)
+event acceleration (i++) {
+  face vector av = a;
+  foreach_face(y)
+    av.y[] -= 1;
+}
+
+
+event movie (t += 0.0004; t <= runtime)
 {
   clear();
   view (width = 20*R, height = 10*R);
-  squares ("u.x", spread = -1, linear = true);
+  //squares ("u.x", spread = -1, linear = true);
   draw_vof ("f");
 
   box();
