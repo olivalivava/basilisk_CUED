@@ -33,11 +33,18 @@ const double Zi = 3.5;
 double runtime = 2.0; //set runtime length
 //#include "two-phase-generic.h"
 
+// Open boundaries at the left and right sides
+u.n[left] = neumann(0.);    // Free flow: no gradient in normal velocity
+u.t[left] = neumann(0.);    // Free slip: no gradient in tangential velocity
+p[left] = dirichlet(0.);    // Pressure is fixed at zero
 
+u.n[right] = neumann(0.);
+u.t[right] = neumann(0.);
+p[right] = dirichlet(0.);
 
 int main()
 {
-  size (10*R);
+  size (20*R);
   origin (-L0/2., 0, -L0/2.);
   init_grid(64); // Higher grid resolution
   double uvelc = sqrt((We*sigmac)/(rho1c*2*R));
@@ -63,6 +70,7 @@ event init (t = 0)
 event movie (t += 0.004; t <= runtime)
 {
   clear();
+  view (width = 20*R, height = 10*R);
   squares ("u.x", spread = -1, linear = true);
   draw_vof ("f");
 
