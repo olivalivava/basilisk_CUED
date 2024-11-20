@@ -28,7 +28,7 @@ double R = 0.0168; //does not run for 0.000168
 //double R1 = R; //set the radius for the left droplet (R1<1.)
 //double R2 = R; //set the radius for the right (R2<1.)
 //double uvel = 0.5; //set colliding speed (uniform velocity ??)
-double runtime = 1.0; //set runtime length
+double runtime = 2.0; //set runtime length
 //#include "two-phase-generic.h"
 
 // Open boundaries at the left and right sides
@@ -63,11 +63,11 @@ event init (t = 0)
   }
 }
 
-event acceleration (i++) {
-  face vector av = a;
-  foreach_face(y)
-    av.y[] = -1;   //gravity = 9.81
-}
+// event acceleration (i++) {
+//   face vector av = a;
+//   foreach_face(y)
+//     av.y[] = -1;   //gravity = 9.81
+// }
 
 
 event movie (t += 0.004; t <= runtime)
