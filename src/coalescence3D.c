@@ -63,11 +63,11 @@ event init (t = 0)
   }
 }
 
-// event acceleration (i++) {
-//   face vector av = a;
-//   foreach_face(y)
-//     av.y[] = -1.;   //gravity = 9.81
-// }
+event acceleration (i++) {
+  face vector av = a;
+  foreach_face(y)
+    av.y[] = -1.;   //gravity = 9.81
+}
 
 
 event movie (t += 0.004; t <= runtime)
