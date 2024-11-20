@@ -17,7 +17,7 @@
 double We = 61.4;
 double Re = 296.5;
 double B = 0.0;
-double R = 0.000168;
+double R = 0.0168; //does not run for 0.000168
 
 #define rho1c 762.0 //tetradecane
 #define rho2c 1.251 //nitrogen
@@ -27,20 +27,16 @@ double R = 0.000168;
 
 //double R1 = R; //set the radius for the left droplet (R1<1.)
 //double R2 = R; //set the radius for the right (R2<1.)
-
-const double Zi = 3.5;
 //double uvel = 0.5; //set colliding speed (uniform velocity ??)
-double runtime = 2.0; //set runtime length
+double runtime = 1.0; //set runtime length
 //#include "two-phase-generic.h"
 
 // Open boundaries at the left and right sides
 u.n[left] = neumann(0.);    // Free flow: no gradient in normal velocity
 u.t[left] = neumann(0.);    // Free slip: no gradient in tangential velocity
-p[left] = dirichlet(0.);    // Pressure is fixed at zero
 
 u.n[right] = neumann(0.);
 u.t[right] = neumann(0.);
-p[right] = dirichlet(0.);
 
 int main()
 {
@@ -48,12 +44,12 @@ int main()
   origin (-L0/2., 0, -L0/2.);
   init_grid(64); // Higher grid resolution
   double uvelc = sqrt((We*sigmac)/(rho1c*2*R));
-  rho1 = rho1c;
-  rho2 = rho2c;
-  mu1 = (rho1*uvelc*2*R)/Re;
-  mu2 = mu1/MUR;
-  f.sigma = sigmac;
-  TOLERANCE = 1e-5 [*];
+  rho1 = rho1c;               //kg/m^3
+  rho2 = rho2c;               //kg/m^3
+  mu1 = (rho1*uvelc*2*R)/Re;  // (Pa * s)
+  mu2 = mu1/MUR;              //Pa s
+  f.sigma = sigmac;           //N/m
+  TOLERANCE = 1e-4 [*];       //defult 1e04
   run();
 }
 
@@ -67,18 +63,18 @@ event init (t = 0)
   }
 }
 
-event acceleration (i++) {
-  face vector av = a;
-  foreach_face(y)
-    av.y[] -= 1;
-}
+// event acceleration (i++) {
+//   face vector av = a;
+//   foreach_face(y)
+//     av.y[] = -1.;   //gravity = 9.81
+// }
 
 
-event movie (t += 0.0004; t <= runtime)
+event movie (t += 0.004; t <= runtime)
 {
   clear();
   view (width = 20*R, height = 10*R);
-  //squares ("u.x", spread = -1, linear = true);
+  //squares ("u.x", spread = -1, linear = true); //removed this
   draw_vof ("f");
 
   box();
