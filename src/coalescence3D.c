@@ -70,7 +70,7 @@ event init (t = 0)
 event acceleration (i++) {
   face vector av = a;
   foreach_face(y)
-    av.y[] -= 0.98;   //gravity = 9.81
+    av.y[] -= 0.0000098;   //gravity = 9.81
 }
 
 
