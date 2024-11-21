@@ -14,14 +14,16 @@
 double We = 61.4;
 double Re = 296.5;
 double B = 0.0;
-double R = 0.0168; //does not run for 0.000168
+double R = 0.168; // R1 = R/Rr
 
 
 #define rho1c 762.0 //tetradecane
 #define rho2c 1.251 //nitrogen
-#define sigmac 0.0276 //tetradecane
+#define sigmac 10 //tetradecane
 #define MUR 97.7
-double runtime = 0.5; //set runtime length
+#define Rr 1000
+
+double runtime = 20.0; //set runtime length
 
 //double R1 = R; //set the radius for the left droplet (R1<1.)
 //double R2 = R; //set the radius for the right (R2<1.)
@@ -39,12 +41,12 @@ u.t[right] = neumann(0.);
 int main()
 {
   size (15.*R);
-  init_grid(64); // Base resolution
+  init_grid(128); // Base resolution
   origin (-L0/2., -L0/2. , -L0/2.);     //changed the origin
-  double uvelc = sqrt((We*sigmac)/(rho1c*2*R));
+  double uvel = sqrt((We*sigmac)/(rho1c*2*(R)));
   rho1 = rho1c;               //kg/m^3
   rho2 = rho2c;               //kg/m^3
-  mu1 = (rho1*uvelc*2*R)/Re;  // (Pa * s)
+  mu1 = (rho1*uvel*2*(R))/Re;  // (Pa * s)
   mu2 = mu1/MUR;              //Pa s
   f.sigma = sigmac;           //N/m
   TOLERANCE = 1e-4 [*];       //defult 1e04
@@ -53,11 +55,12 @@ int main()
 
 event init (t = 0)
 {
+  double X = B*(2*(R));
   fraction (f, max (- (sq(x + 2*R) + sq(y) + sq(z)- sq(R)),
-		                - (sq(x - 2*R) + sq(y) + sq(z) - sq(R))));
+		                - (sq(x - 2*R) + sq(y) + sq(z-X) - sq(R))));
   foreach() {
-      double uvelc = sqrt((We*sigmac)/(rho1c*2*R));
-      u.x[] = - sign(x)*f[] * uvelc; //how to assign velocity to each droplet?
+      double uvel = sqrt((We*sigmac)/(rho1c*2*(R)));
+      u.x[] = - sign(x)*f[] * uvel; //how to assign velocity to each droplet?
   }
 }
 
@@ -67,11 +70,12 @@ event init (t = 0)
 //   }
 // }
 
-event acceleration (i++) {
-  face vector av = a;
-  foreach_face(y)
-    av.y[] -= 0.0000098;   //gravity = 9.81
-}
+// event acceleration (i++) {
+//   double g = 9.81 * sq(1/Rr) //using Bo = (rho1 * g * (2R)**2)/sigma
+//   face vector av = a;
+//   foreach_face(y)
+//     av.y[] -= g;   //gravity = 9.81
+// }
 
 
 // event adapt (i++) {
@@ -80,7 +84,7 @@ event acceleration (i++) {
 // }
 
 
-event movie (t += 0.004; t <= runtime)
+event movie (t += 0.20; t <= runtime)
 {
   clear();
   //view (width = 20*R, height = 10*R);
