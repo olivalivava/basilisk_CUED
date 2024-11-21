@@ -19,7 +19,7 @@ double R = 0.178; // R1 = R/Rr
 
 #define rho1c 762.0 //tetradecane
 #define rho2c 1.251 //nitrogen
-#define sigmac 0.0276 //tetradecane
+#define sigmac 27.6 //tetradecane
 #define MUR 97.7
 //#define Rr 1000
 
@@ -56,8 +56,8 @@ int main()
 event init (t = 0)
 {
   double X = B*(2*(R));
-  fraction (f, max (- (sq(x + 2*R) + sq(y + X/2.) + sq(z)- sq(R)),
-		                - (sq(x - 2*R) + sq(y - X/2.) + sq(z) - sq(R))));
+  fraction (f, max (- (sq(x + R) + sq(y + X/2.) + sq(z)- sq(R)),
+		                - (sq(x - R) + sq(y - X/2.) + sq(z) - sq(R))));
   foreach() {
       double uvel = sqrt((We*sigmac)/(rho1c*2*(R)));
       u.x[] = - sign(x)*f[] * uvel; //how to assign velocity to each droplet?
