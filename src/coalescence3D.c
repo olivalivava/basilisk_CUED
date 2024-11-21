@@ -1,5 +1,4 @@
 #include "grid/multigrid.h"
-
 #define dimension 3
 
 #include "navier-stokes/centered.h"
@@ -8,27 +7,25 @@
 #include "vof.h"
 #include "tension.h"
 #include "view.h"
-#include "axi.h"
+//#include "axi.h"
 
-#ifndef LEVEL
-# define LEVEL 8
-#endif
+#define LEVEL 8
 
 double We = 61.4;
 double Re = 296.5;
 double B = 0.0;
 double R = 0.0168; //does not run for 0.000168
 
+
 #define rho1c 762.0 //tetradecane
 #define rho2c 1.251 //nitrogen
 #define sigmac 0.0276 //tetradecane
 #define MUR 97.7
-
+double runtime = 0.5; //set runtime length
 
 //double R1 = R; //set the radius for the left droplet (R1<1.)
 //double R2 = R; //set the radius for the right (R2<1.)
 //double uvel = 0.5; //set colliding speed (uniform velocity ??)
-double runtime = 2.0; //set runtime length
 //#include "two-phase-generic.h"
 
 // Open boundaries at the left and right sides
@@ -38,11 +35,12 @@ u.t[left] = neumann(0.);    // Free slip: no gradient in tangential velocity
 u.n[right] = neumann(0.);
 u.t[right] = neumann(0.);
 
+
 int main()
 {
-  size (15*R);
-  origin (-L0/2., 0, -L0/2.);
-  init_grid(64); // Higher grid resolution
+  size (15.*R);
+  init_grid(64); // Base resolution
+  origin (-L0/2., -L0/2. , -L0/2.);     //changed the origin
   double uvelc = sqrt((We*sigmac)/(rho1c*2*R));
   rho1 = rho1c;               //kg/m^3
   rho2 = rho2c;               //kg/m^3
@@ -56,24 +54,36 @@ int main()
 event init (t = 0)
 {
   fraction (f, max (- (sq(x + 2*R) + sq(y) + sq(z)- sq(R)),
-		    - (sq(x - 2*R) + sq(y) + sq(z) - sq(R))));
+		                - (sq(x - 2*R) + sq(y) + sq(z) - sq(R))));
   foreach() {
       double uvelc = sqrt((We*sigmac)/(rho1c*2*R));
       u.x[] = - sign(x)*f[] * uvelc; //how to assign velocity to each droplet?
   }
 }
 
-// event acceleration (i++) {
-//   face vector av = a;
-//   foreach_face(y)
-//     av.y[] = -1;   //gravity = 9.81
+// event adapt(i++) {
+//   foreach() {
+//     refine(f[] > 0.01 && f[] < 0.99 && level < LEVEL);
+//   }
+// }
+
+event acceleration (i++) {
+  face vector av = a;
+  foreach_face(y)
+    av.y[] -= 0.98;   //gravity = 9.81
+}
+
+
+// event adapt (i++) {
+//   double uemax = 1e-2;
+//   adapt_wavelet ({f,u}, (double[]){0.001,uemax,uemax,uemax}, LEVEL, 5);
 // }
 
 
 event movie (t += 0.004; t <= runtime)
 {
   clear();
-  view (width = 20*R, height = 10*R);
+  //view (width = 20*R, height = 10*R);
   //squares ("u.x", spread = -1, linear = true); //removed this
   draw_vof ("f");
 
