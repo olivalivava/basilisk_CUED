@@ -7,7 +7,7 @@
 #include "vof.h"
 #include "tension.h"
 #include "view.h"
-//#include "axi.h"
+#include "axi.h" //disabled for the droplet_h_sigma=10 run
 
 #define LEVEL 8
 
@@ -19,30 +19,30 @@ double R = 0.168; // R1 = R/Rr
 
 #define rho1c 762.0 //tetradecane
 #define rho2c 1.251 //nitrogen
-#define sigmac 10 //tetradecane
+#define sigmac 0.0276 //tetradecane
 #define MUR 97.7
 #define Rr 1000
 
-double runtime = 20.0; //set runtime length
+double runtime = 5.0; //set runtime length
 
 //double R1 = R; //set the radius for the left droplet (R1<1.)
 //double R2 = R; //set the radius for the right (R2<1.)
 //double uvel = 0.5; //set colliding speed (uniform velocity ??)
 //#include "two-phase-generic.h"
 
-// Open boundaries at the left and right sides
-u.n[left] = neumann(0.);    // Free flow: no gradient in normal velocity
-u.t[left] = neumann(0.);    // Free slip: no gradient in tangential velocity
+// // Open boundaries at the left and right sides
+// u.n[left] = neumann(0.);    // Free flow: no gradient in normal velocity
+// u.t[left] = neumann(0.);    // Free slip: no gradient in tangential velocity
 
-u.n[right] = neumann(0.);
-u.t[right] = neumann(0.);
+// u.n[right] = neumann(0.);
+// u.t[right] = neumann(0.);
 
 
 int main()
 {
   size (15.*R);
   init_grid(128); // Base resolution
-  origin (-L0/2., -L0/2. , -L0/2.);     //changed the origin
+  origin (-L0/2., -L0/2. , 0.);     //changed the origin
   double uvel = sqrt((We*sigmac)/(rho1c*2*(R)));
   rho1 = rho1c;               //kg/m^3
   rho2 = rho2c;               //kg/m^3
@@ -70,12 +70,12 @@ event init (t = 0)
 //   }
 // }
 
-// event acceleration (i++) {
-//   double g = 9.81 * sq(1/Rr) //using Bo = (rho1 * g * (2R)**2)/sigma
-//   face vector av = a;
-//   foreach_face(y)
-//     av.y[] -= g;   //gravity = 9.81
-// }
+event acceleration (i++) {
+  double g = 9.81 * sq(1/Rr); //using Bo = (rho1 * g * (2R)**2)/sigma
+  face vector av = a;
+  foreach_face(y)
+    av.y[] -= g;   //gravity = 9.81
+}
 
 
 // event adapt (i++) {
