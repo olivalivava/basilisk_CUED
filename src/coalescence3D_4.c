@@ -25,8 +25,8 @@ double R = 0.000178; // R1 = R/Rr
 #define MUR 0.0084 //mu1/mu2, 1.05
 //#define Rr 1000
 
-double runtime = 0.0002; //set runtime length 0.003 good for whole period
-double uvel = 20.;
+double runtime = 0.00035; //set runtime length 0.003 good for whole period
+double uvel = 10.;
 //double R1 = R; //set the radius for the left droplet (R1<1.)
 //double R2 = R; //set the radius for the right (R2<1.)
 //double uvel = 0.5; //set colliding speed (uniform velocity ??)
@@ -92,7 +92,7 @@ event logfile (i++) {
 // }
 
 
-event movie (t += 3.0e-6; t <= runtime)
+event movie (t += 2.0e-6; t <= runtime)
 {
   clear();
   //view (width = 20*R, height = 10*R);
