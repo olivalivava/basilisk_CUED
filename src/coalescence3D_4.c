@@ -21,12 +21,12 @@ double R = 0.000178; // R1 = R/Rr
 #define rho2c 758.0 //tetradecane
 #define mu1c 1.787e-5 //nitrogen
 #define mu2c 2.128e-3 //tetradecane
-#define RHOR 0.25 //rho1/rho2, 0.25
+#define RHOR 0.75 //rho1/rho2, 0.25
 #define MUR 1.05//mu1/mu2, 1.05
 #define Rr 1000
 
 double runtime = 0.0002; //set runtime length 0.003 good for whole period
-double uvel = 17.5;
+double uvel = 35.;
 //double R1 = R; //set the radius for the left droplet (R1<1.)
 //double R2 = R; //set the radius for the right (R2<1.)
 //double uvel = 0.5; //set colliding speed (uniform velocity ??)
