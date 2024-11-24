@@ -7,7 +7,7 @@
 #include "vof.h"
 #include "tension.h"
 #include "view.h"
-//#include "axi.h"
+//#include "axi.h" // Not symmetrical about z-axis
 
 #define LEVEL 8
 
@@ -19,11 +19,11 @@ double R = 0.178; // R1 = R/Rr
 
 #define rho1c 762.0 //tetradecane
 #define rho2c 1.251 //nitrogen
-#define sigmac 27.6 //tetradecane
+#define sigmac 0.0276 //tetradecane 0.0276
 #define MUR 97.7
-//#define Rr 1000
+#define Rr 1000
 
-double runtime = 20.0; //set runtime length
+double runtime = 10.0; //set runtime length
 
 //double R1 = R; //set the radius for the left droplet (R1<1.)
 //double R2 = R; //set the radius for the right (R2<1.)
@@ -41,7 +41,7 @@ u.t[right] = neumann(0.);
 int main()
 {
   size (15.*R);
-  init_grid(64); // Base resolution
+  init_grid(128); // Base resolution
   origin (-L0/2., -L0/2. , -L0/2.);     //changed the origin
   double uvel = sqrt((We*sigmac)/(rho1c*2*(R)));
   rho1 = rho1c;               //kg/m^3
