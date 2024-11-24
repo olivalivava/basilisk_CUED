@@ -2,7 +2,7 @@
 #define dimension 3
 
 #include "navier-stokes/centered.h"
-#define mu(f)  (1./(clamp(f,0,1)*(1./mu1 - 1./mu2) + 1./mu2))
+//#define mu(f)  (1./(clamp(f,0,1)*(1./mu1 - 1./mu2) + 1./mu2))
 #include "two-phase.h"
 #include "vof.h"
 #include "tension.h"
@@ -21,14 +21,12 @@ double R = 0.000178; // R1 = R/Rr
 #define rho2c 758.0 //tetradecane
 #define mu1c 1.787e-5 //nitrogen
 #define mu2c 2.128e-3 //tetradecane
-// #define MUR 1.05 //mu1/mu2
-// #define RHOR 0.25 //rho1/rho2
-#define MUR 1.787e-5/2.128e-3
-#define RHOR 1.138/758
+#define RHOR 0.164 //rho1/rho2, 0.25
+#define MUR 8.40e-3//mu1/mu2, 1.05
 #define Rr 1000 
 
-double runtime = 0.001; //set runtime length
-
+double runtime = 0.0003; //set runtime length 0.003 good for whole period
+double uvel = 17.5;
 //double R1 = R; //set the radius for the left droplet (R1<1.)
 //double R2 = R; //set the radius for the right (R2<1.)
 //double uvel = 0.5; //set colliding speed (uniform velocity ??)
@@ -41,16 +39,17 @@ double runtime = 0.001; //set runtime length
 // u.n[right] = neumann(0.);
 // u.t[right] = neumann(0.);
 
-
+//double uvel = sqrt((We*sigmac)/(rho2*2*(R)));
 int main()
 {
-  size (15.*R);
-  init_grid(128); // Base resolution
+  size (10.*R);
+  init_grid(64); // Base resolution
   origin (-L0/2., -L0/2. , -L0/2.);     //changed the origin
-  rho1 = rho1c;
-  rho2 = rho2c;               //kg/m^3
-  mu1 = mu1c;
-  mu2 = mu2c;               //Pa s
+  rho2 = (We * sigmac)/(2*R*uvel*uvel);          //kg/m^3
+  rho1 = rho2*RHOR; 
+  mu2 = rho2*uvel*(2*R)/Re;     
+  mu1 = mu2*MUR;
+//  mu2 = mu2c;               //Pa s
   f.sigma = sigmac;           //N/m
   TOLERANCE = 1e-4 [*];       //defult 1e04
   run();
@@ -59,18 +58,16 @@ int main()
 event init (t = 0)
 {
   double X = B*(2*(R));
-  fraction (f, max (- (sq(x + 1.5*R) + sq(y + X/2.) + sq(z)- sq(R)),
-		                - (sq(x - 1.5*R) + sq(y - X/2.) + sq(z) - sq(R))));
+  fraction (f, max (- (sq(x + 1.3*R) + sq(y + X/2.) + sq(z)- sq(R)),
+		                - (sq(x - 1.3*R) + sq(y - X/2.) + sq(z) - sq(R))));
   foreach() {
-      double uvel = sqrt((We*sigmac)/(rho2*2*(R)));
       u.x[] = - sign(x)*f[] * uvel; //how to assign velocity to each droplet?
   }
 }
 
 event logfile (i++) {
-  double uvel = sqrt((We*sigmac)/(rho2*2*(R)));
   fprintf(stderr, "%g, %g, %g, %g, %g, %g, %g, %g, %g, %g", 
-                    t, dt,rho1, rho2, mu1, mu2, f.sigma, uvel, perf.t, perf.speed);
+                    t, dt,rho1, rho2, mu1, mu2, f.sigma, perf.t, uvel, perf.speed);
   putchar ('\n');
   fflush (stdout);
 }
@@ -95,7 +92,7 @@ event logfile (i++) {
 // }
 
 
-event movie (t += 1.0e-6; t <= runtime)
+event movie (t += 1.0e-5; t <= runtime)
 {
   clear();
   //view (width = 20*R, height = 10*R);
