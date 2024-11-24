@@ -22,7 +22,7 @@ double R = 0.000178; // R1 = R/Rr
 #define mu1c 1.787e-5 //nitrogen
 #define mu2c 2.128e-3 //tetradecane
 #define RHOR 0.50 //rho1/rho2, 0.25
-#define MUR 0.0084 //mu1/mu2, 1.05
+#define MUR 0.0084*1.05 //mu1/mu2, 1.05
 //#define Rr 1000
 
 double runtime = 0.00035; //set runtime length 0.003 good for whole period
@@ -92,7 +92,7 @@ event logfile (i++) {
 // }
 
 
-event movie (t += 2.0e-6; t <= runtime)
+event movie (t += 1.0e-6; t <= runtime)
 {
   clear();
   //view (width = 20*R, height = 10*R);
