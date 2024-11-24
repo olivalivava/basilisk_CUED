@@ -21,7 +21,7 @@ double R = 0.000168; // R1 = R/Rr, 0.000168
 #define mu1c 1.787e-5//nitrogen 1.787e-5
 #define mu2c 2.128e-3 //tetradecane
 #define sigmac 0.0276 //tetradecane
-#define RHOR 1.642 // 1.6417e-3
+#define RHOR 0.5 // 1.6417e-3
 #define MUR 8.186e-3 //8.186e-3
 
 //#define RHOR 0.06
