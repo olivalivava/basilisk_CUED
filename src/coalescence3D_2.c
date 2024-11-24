@@ -99,7 +99,7 @@ event logfile (i++) {
   fflush (stdout);
 }
 
-event movie (t += 2.0e-6; t <= runtime)
+event movie (t += 5.0e-7; t <= runtime)
 {
   clear();
   //view (width = 20*R, height = 10*R);
