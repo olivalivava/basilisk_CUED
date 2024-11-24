@@ -16,13 +16,13 @@ double Re = 327.7;
 double B = 0.25;
 double R = 0.000178; // R1 = R/Rr
 
-#define sigmac 0.026 //tetradecane 0.0276
+#define sigmac 0.26 //tetradecane 0.026
 #define rho1c 1.138 //nitrogen
 #define rho2c 758.0 //tetradecane
 #define mu1c 1.787e-5 //nitrogen
 #define mu2c 2.128e-3 //tetradecane
 #define RHOR 0.164 //rho1/rho2, 0.25
-#define MUR 0.840//mu1/mu2, 1.05
+#define MUR 8.40e-5//mu1/mu2, 1.05
 #define Rr 1000 
 
 double runtime = 0.0002; //set runtime length 0.003 good for whole period
