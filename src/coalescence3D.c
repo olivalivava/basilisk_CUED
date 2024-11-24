@@ -22,7 +22,7 @@ double R = 0.000168; // R1 = R/Rr, 0.000168
 #define mu2c 2.128e-3 //tetradecane
 #define sigmac 0.0276 //tetradecane
 #define RHOR 0.7 // 1.6417e-3, 0.06
-#define MUR 0.0082*1.25 //8.186e-3, 1.25, 0.01025
+#define MUR 0.0082*1.5 //8.186e-3, 1.25, 0.0123
 
 //#define RHOR 0.06
 //#define MUR 1.25
