@@ -28,7 +28,7 @@ double R = 0.000168; // R1 = R/Rr, 0.000168
 //#define MUR 1.25
 //#define Rr 1000
 double runtime = 0.0002; //set runtime length
-double uvel = 17.5;
+double uvel = 10.;
 
 //double R1 = R; //set the radius for the left droplet (R1<1.)
 //double R2 = R; //set the radius for the right (R2<1.)
