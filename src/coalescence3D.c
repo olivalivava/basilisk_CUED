@@ -26,7 +26,7 @@ double R = 0.000168; // R1 = R/Rr, 0.000168
 //#define RHOR 0.06
 //#define MUR 1.25
 //#define Rr 1000
-double runtime = 1.0; //set runtime length
+double runtime = 0.001; //set runtime length
 
 //double R1 = R; //set the radius for the left droplet (R1<1.)
 //double R2 = R; //set the radius for the right (R2<1.)
@@ -52,7 +52,6 @@ int main()
   mu2 = mu2c;              //Pa s
   f.sigma = sigmac;           //N/m
   TOLERANCE = 1e-4 [*];       //defult 1e04
-  fprintf(stderr, "dt = %g", dt);
   run();
 }
 
@@ -88,13 +87,13 @@ event init (t = 0)
 
 event logfile (i++) {
   double uvel = sqrt((We*sigmac)/(rho2*2*(R)));
-  fprintf(stderr, "%g, %g, %g, %g, %g, %g, %g", 
-                    t, rho1, rho2, mu1, mu2, f.sigma, uvel);
+  fprintf(stderr, "%g, %g, %g, %g, %g, %g, %g, %g, %g, %g", 
+                    t, dt,rho1, rho2, mu1, mu2, f.sigma, uvel, perf.t, perf.speed);
   putchar ('\n');
   fflush (stdout);
 }
 
-event movie (t += 0.004; t <= runtime)
+event movie (t += 1.0e-6; t <= runtime)
 {
   clear();
   //view (width = 20*R, height = 10*R);

@@ -14,7 +14,7 @@
 double We = 70.8;
 double Re = 327.7;
 double B = 0.25;
-double R = 0.178; // R1 = R/Rr
+double R = 0.000178; // R1 = R/Rr
 
 #define sigmac 0.026 //tetradecane 0.0276
 #define rho1c 1.138 //nitrogen
@@ -27,7 +27,7 @@ double R = 0.178; // R1 = R/Rr
 #define RHOR 1.138/758
 #define Rr 1000 
 
-double runtime = 1.0; //set runtime length
+double runtime = 0.001; //set runtime length
 
 //double R1 = R; //set the radius for the left droplet (R1<1.)
 //double R2 = R; //set the radius for the right (R2<1.)
@@ -48,9 +48,9 @@ int main()
   init_grid(128); // Base resolution
   origin (-L0/2., -L0/2. , -L0/2.);     //changed the origin
   rho1 = rho1c;
-  rho2 = rho1/RHOR;               //kg/m^3
+  rho2 = rho2c;               //kg/m^3
   mu1 = mu1c;
-  mu2 = mu1/MUR;               //Pa s
+  mu2 = mu2c;               //Pa s
   f.sigma = sigmac;           //N/m
   TOLERANCE = 1e-4 [*];       //defult 1e04
   run();
@@ -65,6 +65,14 @@ event init (t = 0)
       double uvel = sqrt((We*sigmac)/(rho2*2*(R)));
       u.x[] = - sign(x)*f[] * uvel; //how to assign velocity to each droplet?
   }
+}
+
+event logfile (i++) {
+  double uvel = sqrt((We*sigmac)/(rho2*2*(R)));
+  fprintf(stderr, "%g, %g, %g, %g, %g, %g, %g, %g, %g, %g", 
+                    t, dt,rho1, rho2, mu1, mu2, f.sigma, uvel, perf.t, perf.speed);
+  putchar ('\n');
+  fflush (stdout);
 }
 
 // event adapt(i++) {
@@ -87,13 +95,13 @@ event init (t = 0)
 // }
 
 
-event movie (t += 0.04; t <= runtime)
+event movie (t += 1.0e-6; t <= runtime)
 {
   clear();
   //view (width = 20*R, height = 10*R);
   //squares ("u.x", spread = -1, linear = true); //removed this
+  fprintf(stderr, "Generating frame at t = %g\n", t);
   draw_vof ("f");
-
   box();
   save ("movie3D_4.mp4");
 }
