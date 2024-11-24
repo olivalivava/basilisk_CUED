@@ -21,13 +21,13 @@ double R = 0.000168; // R1 = R/Rr, 0.000168
 #define mu1c 1.787e-5//nitrogen 1.787e-5
 #define mu2c 2.128e-3 //tetradecane
 #define sigmac 0.0276 //tetradecane
-#define RHOR 1.251/762.0
-#define MUR 1.787e-5/2.128e-3
+#define RHOR 1.642 // 1.6417e-3
+#define MUR 8.186e-3 //8.186e-3
 
 //#define RHOR 0.06
 //#define MUR 1.25
 //#define Rr 1000
-double runtime = 0.003; //set runtime length
+double runtime = 0.0002; //set runtime length
 double uvel = 17.5;
 
 //double R1 = R; //set the radius for the left droplet (R1<1.)
