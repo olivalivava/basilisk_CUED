@@ -28,7 +28,7 @@ double R = 0.000168; // R1 = R/Rr, 0.000168
 //#define MUR 1.25
 //#define Rr 1000
 double runtime = 0.0002; //set runtime length
-double uvel = 35.;
+double uvel = 50.;
 
 //double R1 = R; //set the radius for the left droplet (R1<1.)
 //double R2 = R; //set the radius for the right (R2<1.)
@@ -99,7 +99,7 @@ event logfile (i++) {
   fflush (stdout);
 }
 
-event movie (t += 1.0e-5; t <= runtime)
+event movie (t += 2.0e-6; t <= runtime)
 {
   clear();
   //view (width = 20*R, height = 10*R);
