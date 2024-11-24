@@ -22,10 +22,10 @@ double R = 0.000178; // R1 = R/Rr
 #define mu1c 1.787e-5 //nitrogen
 #define mu2c 2.128e-3 //tetradecane
 #define RHOR 0.164 //rho1/rho2, 0.25
-#define MUR 8.40e-3//mu1/mu2, 1.05
+#define MUR 0.840//mu1/mu2, 1.05
 #define Rr 1000 
 
-double runtime = 0.0003; //set runtime length 0.003 good for whole period
+double runtime = 0.0002; //set runtime length 0.003 good for whole period
 double uvel = 17.5;
 //double R1 = R; //set the radius for the left droplet (R1<1.)
 //double R2 = R; //set the radius for the right (R2<1.)
