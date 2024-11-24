@@ -21,8 +21,8 @@ double R = 0.000178; // R1 = R/Rr
 #define rho2c 758.0 //tetradecane
 #define mu1c 1.787e-5 //nitrogen
 #define mu2c 2.128e-3 //tetradecane
-#define RHOR 0.70 //rho1/rho2, 0.25
-#define MUR 5.0//mu1/mu2, 1.05
+#define RHOR 0.50 //rho1/rho2, 0.25
+#define MUR 2.0//mu1/mu2, 1.05
 //#define Rr 1000
 
 double runtime = 0.0002; //set runtime length 0.003 good for whole period
@@ -44,7 +44,7 @@ int main()
 {
   size (10.*R);
   init_grid(64); // Base resolution
-  origin (-L0/2., -L0/2. , 0.);     //changed the origin
+  origin (-L0/2., -L0/2. , -L0/2.);     //changed the origin
   rho2 = (We * sigmac)/(2*R*uvel*uvel);          //kg/m^3
   rho1 = rho2*RHOR; 
   mu2 = rho2*uvel*(2*R)/Re;     
@@ -92,7 +92,7 @@ event logfile (i++) {
 // }
 
 
-event movie (t += 1.0e-5; t <= runtime)
+event movie (t += 3.0e-6; t <= runtime)
 {
   clear();
   //view (width = 20*R, height = 10*R);
