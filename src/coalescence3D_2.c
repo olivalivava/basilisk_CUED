@@ -7,29 +7,26 @@
 #include "vof.h"
 #include "tension.h"
 #include "view.h"
-//#include "axi.h" //disabled for the droplet_h_sigma=10 run
+//#include "axi.h" // Not symmetrical about z-axis
 
 #define LEVEL 8
 
-double We = 61.4;
-double Re = 296.5;
-double B = 0.0;
-double R = 0.000168; // R1 = R/Rr, 0.000168
+double We = 70.8;
+double Re = 327.7;
+double B = 0.25;
+double R = 0.000178; // R1 = R/Rr
 
-#define rho1c 1.251 //nitrogen (outside)
-#define rho2c 762.0 //tetradecane (inside)
-#define mu1c 1.787e-5//nitrogen 1.787e-5
+#define sigmac 0.026 //tetradecane 0.026
+#define rho1c 1.138 //nitrogen
+#define rho2c 758.0 //tetradecane
+#define mu1c 1.787e-5 //nitrogen
 #define mu2c 2.128e-3 //tetradecane
-#define sigmac 0.0276 //tetradecane
-#define RHOR 0.7 // 1.6417e-3, 0.06
-#define MUR 0.0082 //8.186e-3, 1.25
-
-//#define RHOR 0.06
-//#define MUR 1.25
+#define RHOR 0.50 //rho1/rho2, 0.25
+#define MUR 0.0084 //mu1/mu2, 1.05
 //#define Rr 1000
-double runtime = 0.0015; //set runtime length
-double uvel = 50.;
 
+double runtime = 0.0015; //set runtime length 0.003 good for whole period
+double uvel = 10.;
 //double R1 = R; //set the radius for the left droplet (R1<1.)
 //double R2 = R; //set the radius for the right (R2<1.)
 //double uvel = 0.5; //set colliding speed (uniform velocity ??)
@@ -42,20 +39,17 @@ double uvel = 50.;
 // u.n[right] = neumann(0.);
 // u.t[right] = neumann(0.);
 
-
+//double uvel = sqrt((We*sigmac)/(rho2*2*(R)));
 int main()
 {
   size (10.*R);
   init_grid(64); // Base resolution
   origin (-L0/2., -L0/2. , -L0/2.);     //changed the origin
-  rho2 = (We * sigmac)/(2*R*uvel*uvel);               //kg/m^3
-//  rho1 = rho1c;
-  // mu2 = mu2c;
-  // mu1 = mu1c;
-  rho1 = rho2*RHOR;      //used the parameters given on the website
-//  double uvel = sqrt((We*sigmac)/(rho2*2*(R)));
-  mu2 = rho2*uvel*(2*R)/Re;                      //Pa s
+  rho2 = (We * sigmac)/(2*R*uvel*uvel);          //kg/m^3
+  rho1 = rho2*RHOR; 
+  mu2 = rho2*uvel*(2*R)/Re;     
   mu1 = mu2*MUR;
+//  mu2 = mu2c;               //Pa s
   f.sigma = sigmac;           //N/m
   TOLERANCE = 1e-4 [*];       //defult 1e04
   run();
@@ -64,12 +58,18 @@ int main()
 event init (t = 0)
 {
   double X = B*(2*(R));
-  fraction (f, max (- (sq(x + 1.3*R) + sq(y) + sq(z)- sq(R)),
-		                - (sq(x - 1.3*R) + sq(y) + sq(z-X) - sq(R))));
+  fraction (f, max (- (sq(x + 1.3*R) + sq(y + X/2.) + sq(z)- sq(R)),
+		                - (sq(x - 1.3*R) + sq(y - X/2.) + sq(z) - sq(R))));
   foreach() {
-//      double uvel = sqrt((We*sigmac)/(rho2*2*(R)));
       u.x[] = - sign(x)*f[] * uvel; //how to assign velocity to each droplet?
   }
+}
+
+event logfile (i++) {
+  fprintf(stderr, "%g, %g, %g, %g, %g, %g, %g, %g, %g, %g", 
+                    t, dt,rho1, rho2, mu1, mu2, f.sigma, perf.t, uvel, perf.speed);
+  putchar ('\n');
+  fflush (stdout);
 }
 
 // event adapt(i++) {
@@ -79,7 +79,7 @@ event init (t = 0)
 // }
 
 // event acceleration (i++) {
-//   double g = 9.81 * sq(1/Rr); //using Bo = (rho1 * g * (2R)**2)/sigma
+//   double g = 9.81 * sq(1/Rr) //using Bo = (rho1 * g * (2R)**2)/sigma
 //   face vector av = a;
 //   foreach_face(y)
 //     av.y[] -= g;   //gravity = 9.81
@@ -91,13 +91,6 @@ event init (t = 0)
 //   adapt_wavelet ({f,u}, (double[]){0.001,uemax,uemax,uemax}, LEVEL, 5);
 // }
 
-event logfile (i++) {
-//  double uvel = sqrt((We*sigmac)/(rho2*2*(R)));
-  fprintf(stderr, "%g, %g, %g, %g, %g, %g, %g, %g, %g, %g", 
-                    t, dt,rho1, rho2, mu1, mu2, f.sigma, uvel, perf.t, perf.speed);
-  putchar ('\n');
-  fflush (stdout);
-}
 
 event movie (t += 5.0e-7; t <= runtime)
 {
@@ -106,7 +99,6 @@ event movie (t += 5.0e-7; t <= runtime)
   //squares ("u.x", spread = -1, linear = true); //removed this
   fprintf(stderr, "Generating frame at t = %g\n", t);
   draw_vof ("f");
-
   box();
-  save ("movie3D.mp4");
+  save ("movie3D_2.mp4");
 }
