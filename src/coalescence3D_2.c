@@ -22,11 +22,11 @@ double R = 0.000178; // R1 = R/Rr
 #define mu1c 1.787e-5 //nitrogen
 #define mu2c 2.128e-3 //tetradecane
 #define RHOR 0.50 //rho1/rho2, 0.25
-#define MUR 0.0084 //mu1/mu2, 1.05
+#define MUR 0.0084*0.95 //mu1/mu2, 1.05, 0.00882
 //#define Rr 1000
 
-double runtime = 0.0015; //set runtime length 0.003 good for whole period
-double uvel = 10.;
+double runtime = 0.0008; //set runtime length 0.003 good for whole period
+double uvel = 40.;
 //double R1 = R; //set the radius for the left droplet (R1<1.)
 //double R2 = R; //set the radius for the right (R2<1.)
 //double uvel = 0.5; //set colliding speed (uniform velocity ??)
@@ -92,7 +92,7 @@ event logfile (i++) {
 // }
 
 
-event movie (t += 5.0e-7; t <= runtime)
+event movie (t += 1.0e-6; t <= runtime)
 {
   clear();
   //view (width = 20*R, height = 10*R);
@@ -100,5 +100,5 @@ event movie (t += 5.0e-7; t <= runtime)
   fprintf(stderr, "Generating frame at t = %g\n", t);
   draw_vof ("f");
   box();
-  save ("movie3D_2.mp4");
+  save ("movie3D_2_k.mp4");
 }

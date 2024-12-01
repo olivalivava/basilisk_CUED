@@ -25,7 +25,7 @@ double R = 0.000178; // R1 = R/Rr
 #define MUR 0.0084*0.95 //mu1/mu2, 1.05, 0.00882
 //#define Rr 1000
 
-double runtime = 0.00045; //set runtime length 0.003 good for whole period
+double runtime = 0.0005; //set runtime length 0.003 good for whole period
 double uvel = 20.;
 //double R1 = R; //set the radius for the left droplet (R1<1.)
 //double R2 = R; //set the radius for the right (R2<1.)
@@ -100,5 +100,5 @@ event movie (t += 1.0e-6; t <= runtime)
   fprintf(stderr, "Generating frame at t = %g\n", t);
   draw_vof ("f");
   box();
-  save ("movie3D_4.mp4");
+  save ("movie3D_4_k.mp4");
 }
